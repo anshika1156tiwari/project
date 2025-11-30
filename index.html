@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Academic-Net</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="" alt="" class="logo" />
+      <h1>Academic-Net</h1>
+    </div>
+
+    <nav class="nav-right">
+      <div class="search">
+        <input id="searchInput" type="search" placeholder="Search subject, keywords, year..." />
+        <button id="searchBtn">Search</button>
+      </div>
+
+      <div class="user-actions">
+        <button id="loginBtn" class="btn outline">Login</button>
+        <button id="signupBtn" class="btn primary">Sign up</button>
+        <button id="uploadBtn" class="btn accent">Upload</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="left-col">
+      <div class="filters card">
+        <h3>Browse Repository</h3>
+        <label>University
+          <select id="filterUniversity"></select>
+        </label>
+        <label>Branch
+          <select id="filterBranch"></select>
+        </label>
+        <label>Semester
+          <select id="filterSemester"></select>
+        </label>
+        <label>Subject
+          <select id="filterSubject"></select>
+        </label>
+        <div class="filters-actions">
+          <button id="applyFilter" class="btn primary">Apply</button>
+          <button id="clearFilter" class="btn outline">Clear</button>
+        </div>
+      </div>
+
+      <div class="requests card">
+        <h3>Missing Notes Requests</h3>
+        <ul id="missingList" class="list"></ul>
+        <form id="missingForm" class="missing-form">
+          <input id="missingSubject" placeholder="Subject (e.g., DBMS)" required />
+          <input id="missingSemester" placeholder="Semester (e.g., 4)" required />
+          <button class="btn small">Request</button>
+        </form>
+      </div>
+
+      <div class="leaderboard card">
+        <h3>Top Contributors</h3>
+        <ol id="leaderboardList"></ol>
+      </div>
+    </section>
+
+    <section class="mid-col">
+      <div class="card feed-controls">
+        <div class="sort">
+          <label>Sort by
+            <select id="sortSelect">
+              <option value="recent">Most Recent</option>
+              <option value="popular">Most Downloaded</option>
+              <option value="rated">Top Rated</option>
+            </select>
+          </label>
+        </div>
+        <div class="view-toggle">
+          <button id="listView" class="btn small">List</button>
+          <button id="gridView" class="btn small outline">Grid</button>
+        </div>
+      </div>
+
+      <div id="filesContainer" class="card files-grid">
+        <!-- file cards injected here -->
+      </div>
+
+      <nav class="pagination card" id="paginationBar"></nav>
+    </section>
+
+    <aside class="right-col">
+      <div class="card about">
+        <h3>About Academic-Net</h3>
+        <p>Semester and university structured repository for notes, previous year papers, and study material. Built on cloud storage and managed DB.</p>
+      </div>
+
+      <div class="card analytics" id="adminAnalytics" style="display:none">
+        <h3>Admin Analytics</h3>
+        <ul>
+          <li id="statUploads">Uploads: —</li>
+          <li id="statDownloads">Downloads: —</li>
+          <li id="statActiveUsers">Active users: —</li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="footer">
+    <p>Academic-Net • University Resources • Cloud Project Demo</p>
+  </footer>
+
+  <!-- Modals -->
+  <div id="modalBackdrop" class="modal-backdrop hidden"></div>
+
+  <!-- Login / Signup -->
+  <div id="authModal" class="modal hidden">
+    <div class="modal-header"><h2 id="authTitle">Login</h2><button class="btn close" id="closeAuth">✕</button></div>
+    <form id="authForm" class="modal-body">
+      <label>Email<input id="email" type="email" required></label>
+      <label>Password<input id="password" type="password" required></label>
+      <div class="auth-extra hidden" id="signupExtra">
+        <label>Name<input id="name"></label>
+        <label>University<input id="university"></label>
+        <label>Branch<input id="branch"></label>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn primary" id="authSubmit">Login</button>
+        <button type="button" class="btn outline" id="switchAuth">Switch to Sign up</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Upload Modal -->
+  <div id="uploadModal" class="modal hidden">
+    <div class="modal-header"><h2>Upload Notes / Paper</h2><button class="btn close" id="closeUpload">✕</button></div>
+    <form id="uploadForm" class="modal-body">
+      <label>University<select id="u_university" required></select></label>
+      <label>Branch<select id="u_branch" required></select></label>
+      <label>Semester<select id="u_semester" required>
+        <option value="">Select</option>
+        <option>1</option><option>2</option><option>3</option><option>4</option>
+        <option>5</option><option>6</option><option>7</option><option>8</option>
+      </select></label>
+      <label>Subject<input id="u_subject" required></label>
+      <label>Type<select id="u_type" required>
+        <option>Notes</option><option>Previous Year Paper</option><option>Lecture Slides</option><option>Assignment</option>
+      </select></label>
+
+      <label>File<input id="u_file" type="file" required></label>
+      <label>Version<input id="u_version" placeholder="e.g., v1, v2 (optional)"></label>
+      <label>Description<textarea id="u_desc" rows="3"></textarea></label>
+
+      <div class="modal-actions">
+        <button type="submit" class="btn primary">Upload</button>
+        <button type="button" class="btn outline" id="cancelUpload">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- File Details Modal -->
+  <div id="fileModal" class="modal hidden">
+    <div class="modal-header">
+      <h2 id="fileModalTitle">File</h2>
+      <button class="btn close" id="closeFileModal">✕</button>
+    </div>
+    <div class="modal-body" id="fileDetailsBody">
+      <!-- details injected -->
+    </div>
+    <div class="modal-actions">
+      <button id="downloadFileBtn" class="btn primary">Download</button>
+      <button id="reportFileBtn" class="btn outline">Report</button>
+      <button id="closeFileBtn" class="btn" >Close</button>
+    </div>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
